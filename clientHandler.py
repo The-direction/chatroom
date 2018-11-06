@@ -1,5 +1,7 @@
-from socket import *
 from threading import Thread
+from PyQt5 import QtCore
+from PyQt5.QtWidgets import *
+from socket import *
 import os
 import sys
 import re
@@ -9,13 +11,18 @@ import signal
 
 
 class Client_handler:
-    def __init__(self, sockfd):
+    def __init__(self, sockfd, ADDR2, ADDR3, path):
         self.s = sockfd
+        self.ADDR2 = ADDR2
+        self.ADDR3 = ADDR3
+        self.path = path
+        self.username = ''
 
     def login(self, userinfo):
         self.userlist = userinfo
         username = userinfo[0]
         password = userinfo[1]
+        #self.username = userinfo[0]
         data = 'L ' + username + ' ' + password
         # 发送登录请求
         self.s.send(data.encode())
@@ -28,7 +35,7 @@ class Client_handler:
             # 密码或者用户名错误，回到客户端打开界面
             return data
 
-    def register(self,registinfo):
+    def register(self, registinfo):
         # 确认密码输入正确
         self.registinfo = registinfo
         username = registinfo[0]
@@ -62,76 +69,97 @@ class Client_handler:
         self.s.send(b'E')
         sys.exit('客户端退出')
 
-    def chatroom(self):
-        self.s.send(b'OK all')
-        # 创建进程接受消息
-        pid = os.fork()
-        signal.signal(signal.SIGCHLD, signal.SIG_IGN)
-        if pid == 0:
-            while 1:
-                data = self.s.recv(1024)
-                if data:
-                    print('\n---------------')
-                    print(data.decode())
-        else:
-            room = Chatthread(self.s)
-            print('出现选择界面')
-            self.p.num = 5
+    def connect_chatfd(self):
+        self.z = socket()
+        # self.zockfd = socket()
+        # 发起连接
+        try:
+            self.z.connect(self.ADDR2)
+        except Exception as e:
+            sys.exit('连接错误', e)
+        self.z.send(self.userlist[0].encode())
+        print('单人聊天套接字已连接到服务端')
 
-    def friendlist(self):
-        self.s.send(b'friendlist')
-        data = self.s.recv(1024).decode()
-        friend_L = re.split(r'\W', data)
-        friend_L.pop(0)
-        self.p.num = 6
-        chat_object = self.p.match(friend_L)
-        self.object_chatroom(chat_object)
-        # 显示好友列表
+#     def chatroom(self):
+#         print('来到聊天室')
+#         self.s.send(b'OK all')
+#         # 创建进程接受消息
+#         pid = os.fork()
+#         signal.signal(signal.SIGCHLD, signal.SIG_IGN)
+#         if pid == 0:
+#             pressed = QtCore.pyqtSignal()
+#             while 1:
+#                 data = self.s.recv(1024)
+#                 if data:
 
-    def object_chatroom(self, chat_object):
-        self.s.send(b'OK one')
-        # 创建进程接受消息
-        pid = os.fork()
-        signal.signal(signal.SIGCHLD, signal.SIG_IGN)
-        if pid == 0:
-            while 1:
-                data = self.s.recv(1024)
-                if data:
-                    print('\n---------------')
-                    print(data.decode())
-        else:
-            room = Chatthread(self.s, pid, chat_object)
-            print('出现选择界面')
-            self.p.num = 5
+#                     def display(data):
+#                         self.chat_page.textBrowser.append(
+#                             (data).decode('utf-8'))
+
+#                     QtCore.QObject.connect(self, QtCore.SIGNAL(
+#                         "pressed()"), self.display(data))
+
+#                     print('\n---------------')
+#                     print(data.decode())
+#         else:
+#             room = Chatthread(self.s, pid, chat_page)
+
+    # def friendlist(self):
+    #     self.s.send(b'friendlist')
+    #     data = self.s.recv(1024).decode()
+    #     friend_L = re.split(r'\W', data)
+    #     friend_L.pop(0)
+    #     self.p.num = 6
+    #     chat_object = self.p.match(friend_L)
+    #     self.object_chatroom(chat_object)
+    #     # 显示好友列表
+
+#     def object_chatroom(self, chat_object, chat_page):
+#         self.chat_page = chat_page
+#         self.s.send(b'OK one')
+#         # 创建进程接受消息
+#         pid = os.fork()
+#         signal.signal(signal.SIGCHLD, signal.SIG_IGN)
+#         if pid == 0:
+#             while 1:
+#                 data = self.s.recv(1024)
+#                 if data:
+#                     print('\n---------------')
+#                     print(data.decode())
+#         else:
+#             room = Chatthread(self.s, pid, self.chat_page, chat_object)
 
 
-class Chatthread(Thread):
-    def __init__(self, s, childpid, object=None):
-        self.s = s
-        self.childpid = childpid
-        if object:
-            self.object = object
-            self.chatone()
-        else:
-            self.chat()
+# class Chatthread(Thread):
+#     def __init__(self, s, childpid, chat_page, object=None):
+#         self.s = s
+#         self.childpid = childpid
+#         self.chat_page = chat_page
+#         if object:
+#             self.object = object
+#             self.chatone()
+#         else:
+#             self.conn()
 
-    def __del__(self):
-        print('退出聊天室')
-        os.kill(self.childpid, signal.SIGKILL)
+#     def __del__(self):
+#         print('退出聊天室')
+#         os.kill(self.childpid, signal.SIGKILL)
 
-    def chat(self):
-        while 1:
-            data = input()
-            if data == 'exit':
-                self.s.send(b'exit')
-                break
-            self.s.send(data.encode())
+#     def chat(self):
+#         # print('222222222222222')
+#         data = self.chat_page.textEdit.toPlainText()
+#         self.chat_page.textEdit.clear()
+#         print(data)
+#         if data == 'exit':
+#             self.s.send(b'exit')
+#         else:
+#             self.s.send(self.data.encode())
 
-    def chatone(self):
-        while 1:
-            data = input()
-            if data == 'exit':
-                self.s.send(b'exit')
-                break
-            data = self.object + '#' + data
-            self.s.send(data.encode())
+#     def chatone(self):
+#         while 1:
+#             data = input()
+#             if data == 'exit':
+#                 self.s.send(b'exit')
+#                 break
+#             data = self.object + '#' + data
+#             self.s.send(data.encode())

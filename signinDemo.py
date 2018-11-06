@@ -40,7 +40,7 @@ class SigninPage(QDialog):
 
     def paintEvent(self, event):
         painter = QPainter(self)
-        pixmap = QPixmap("bgpic4.jpg")
+        pixmap = QPixmap("bgpic/bgpic4.jpg")
         painter.drawPixmap(self.rect(), pixmap)
 
     def layout_init(self):
@@ -90,8 +90,8 @@ class SigninPage(QDialog):
             QMessageBox.information(
                 self, 'Information', '注册成功!')
             self.close()
-            self.login_page = loginPage()
-            self.login_page.show()
+            # self.login_page = loginPage(self.c_handler)
+            # self.login_page.show()
         else:
             QMessageBox.critical(
                 self, 'Wrong', answer)

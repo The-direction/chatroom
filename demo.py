@@ -4,30 +4,20 @@
 
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
-from clientMain import Client
-from clientHandler import Client_handler
+from PyQt5.QtCore import *
 from loginDemo import loginPage
 from signinDemo import SigninPage
-import signal
 
-
-HOST = '127.0.0.1'
-PORT = 8000
-ADDR = (HOST, PORT)
+# HOST = '127.0.0.1'
+# PORT = 8000
+# ADDR = (HOST, PORT)
 
 
 class Demo(QWidget):
-    def __init__(self):
-        def func(sig, frame):
-            if sig == signal.SIGINT:
-                self.c_handler.exit()
+    def __init__(self, c_handler):
+        self.c_handler = c_handler
         super(Demo, self).__init__()
-        signal.signal(signal.SIGINT, func)
         try:
-            # 创建客户端
-            self.client = Client(ADDR)
-            # 处理客户端
-            self.c_handler = Client_handler(self.client.sockfd)
             # 显示登录界面
             self.show_page()
         except Exception as e:
@@ -51,7 +41,8 @@ class Demo(QWidget):
         self.login_button = QPushButton('登录', self)
         self.signin_button = QPushButton('注册', self)
         self.pwd_line.setEchoMode(QLineEdit.Password)
-        # self.black = QLabel('    ',self)
+        # self.login_button.setGeometry(50,150,80,40)
+        self.setStyleSheet("QPushButton{background-color:#B4997E;color:snow;}")
         self.grid_layout = QGridLayout()
         self.h_layout = QHBoxLayout()
         self.v_layout = QVBoxLayout()
@@ -63,7 +54,7 @@ class Demo(QWidget):
 
     def paintEvent(self, event):
         painter = QPainter(self)
-        pixmap = QPixmap("bgpic2.jpg")
+        pixmap = QPixmap("bgpic/bgpic2.jpg")
         painter.drawPixmap(self.rect(), pixmap)
 
     def layout_init(self):
@@ -98,7 +89,7 @@ class Demo(QWidget):
         self.signin_button.clicked.connect(self.show_signin_page_func)
 
     def show_signin_page_func(self):
-        self.close()
+        # self.close()
         self.signin_page.exec_()
 
     def check_login_func(self):
@@ -109,7 +100,8 @@ class Demo(QWidget):
             QMessageBox.information(self, 'Information', '登录成功')
             # self.login_button.clicked.connect(self.show_login_page_func)
             self.close()
-            self.login_page = loginPage()
+            self.c_handler.connect_chatfd()
+            self.login_page = loginPage(self.c_handler)
             self.login_page.show()
 
         else:

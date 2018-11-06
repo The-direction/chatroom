@@ -16,19 +16,23 @@ import re
 import signal
 
 HOST = '127.0.0.1'
-PORT = 8000
-ADDR = (HOST, PORT)
+PORT1 = 8000
+PORT2 = 8001
+ADDR1 = (HOST, PORT1)
+ADDR2 = (HOST, PORT2)
 
 
 # 创建客户端类
 class Client:
-    def __init__(self, ADDR):
-        self.ADDR = ADDR
+    def __init__(self, ADDR1):
+        self.ADDR1 = ADDR1
+        # self.ADDR2 = ADDR2
         # 创建套接字　
         self.sockfd = socket()
+        # self.zockfd = socket()
         # 发起连接
         try:
-            self.sockfd.connect(ADDR)
+            self.sockfd.connect(ADDR1)
         except Exception as e:
             sys.exit('连接错误', e)
         print('已连接到服务端')
