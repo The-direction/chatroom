@@ -128,7 +128,7 @@ class Ui_Form1(QMainWindow):
         self.biaoqingBtn.clicked.connect(self.show_hide)#自定义函数通过value值控制表情窗口的显示
         # 天气
         self.skyLabel = QtWidgets.QLabel(Form)
-        self.skyLabel.setGeometry(QtCore.QRect(25, 366, 291, 51))
+        self.skyLabel.setGeometry(QtCore.QRect(25, 366, 291, 61))
         self.skyLabel.setText("")
         self.skyLabel.setObjectName("skyLabel")
         # 列表框
@@ -182,11 +182,11 @@ class Ui_Form1(QMainWindow):
         _translate = QtCore.QCoreApplication.translate
         Form.setWindowTitle(_translate("Form", "Form"))
         # self.biaoqingBtn.setText(_translate("Form", "biaoqingBtn"))
-        Item1 = QTableWidgetItem(QIcon("表情/1.png"),"1")#通过Qicon插入
+        Item1 = QTableWidgetItem(QIcon("/home/tarena/my_first_project/chatroom/______/1.png"),"1")#通过Qicon插入
         self.tableWidget.setItem(0,0,Item1)
-        Item2 = QTableWidgetItem(QIcon("表情/2.png"),"2")
+        Item2 = QTableWidgetItem(QIcon("/home/tarena/my_first_project/chatroom/______/2.png"),"2")
         self.tableWidget.setItem(0,1,Item2)
-        Item3 = QTableWidgetItem(QIcon("表情/3.png"),"3")
+        Item3 = QTableWidgetItem(QIcon("/home/tarena/my_first_project/chatroom/______/3.png"),"3")
         self.tableWidget.setItem(0,2,Item3)
         item = QTableWidgetItem()
         print(item.text())

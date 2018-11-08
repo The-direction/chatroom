@@ -1,5 +1,4 @@
 # coding=utf-8
-# name : xiongruiqi
 # date : 2018-10-16
 # e-mail : 565401702@qq.com
 # description : 此模块为mysql数据库的调用模块,一些类和函数说明将会再以下说明
@@ -19,7 +18,7 @@ class mySqlHandler:
 
     def firststartdb(self):
         self.cur = self.db.cursor()
-        self.cur.execute('create database if not exists projectdb;')
+        # self.cur.execute('create database if not exists projectdb;')
         self.cur.execute('use projectdb;')
         self.cur.execute('create table if not exists userinformation(\
                           username char(20) not null primary key,\
@@ -35,9 +34,9 @@ class mySqlHandler:
         # self.cur = self.db.cursor()
         # self.cur.execute('use projectdb;')
         self.cur.execute(
-            'create table qunxiaoxi(username char(20),xiaoxi varchar(70),keeptime timestamp;')
+            'create table qunxiaoxi(username char(20),xiaoxi varchar(70),keeptime varchar(30));')
         self.cur.execute(
-            'create table xiaoxi(username char(20),duixiang char(20),xiaoxi varchar(70),keeptime timestamp;')
+            'create table xiaoxi(username char(20),duixiang char(20),xiaoxi varchar(70),keeptime varchar(30));')
         self.cur.close()
 
         self.db.commit()
