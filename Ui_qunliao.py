@@ -26,7 +26,7 @@ class Ui_Form1(QMainWindow):
         path = os.path.split(os.path.realpath(__file__))[0]
         print(path)
         Form.setObjectName("Form")
-        Form.resize(675, 424)
+        Form.resize(675, 444)
         Form.setAutoFillBackground(False)
         path1 = path + '/shaizeiwang3333_看图王.jpg'
         Form.setStyleSheet("#Form\n"
